@@ -1,0 +1,9 @@
+﻿@model Product
+
+<div class="card m-1 p-1">
+	<div class="card-body p-2">
+		<h4 class="card-title">@Model.Name</h4>
+		<span class="badge badge-pill badge-primary float-right">@Model.Price.ToString("c")</span>
+		<p class="card-text">@Model.Description</p>
+	</div>
+</div>

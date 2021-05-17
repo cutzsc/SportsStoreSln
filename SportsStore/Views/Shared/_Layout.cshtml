@@ -4,8 +4,20 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Sports Store</title>
+	<link href="~/lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
-	@RenderBody()
+	<div class="bg-dark text-white p-2">
+		<span class="navbar-brand ml-2">SPORTS STORE</span>
+	</div>
+	<div class="row m-1 p-1">
+		<div id="categories" class="col-2">
+			Put something useful here later.
+		</div>
+		<div class="col-8">
+			@RenderBody()
+		</div>
+		<div class="col-2"></div>
+	</div>
 </body>
 </html>
