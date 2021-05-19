@@ -26,7 +26,7 @@ namespace SportsStore.Tests
 
 			// Act
 			ProductsListViewModel result =
-				(controller.Index() as ViewResult).ViewData.Model as ProductsListViewModel;
+				(controller.Index(null) as ViewResult).ViewData.Model as ProductsListViewModel;
 
 			// Assert
 			Product[] prodArray = result.Products.ToArray();
@@ -53,7 +53,7 @@ namespace SportsStore.Tests
 
 			// Act
 			ProductsListViewModel result =
-				(controller.Index(2) as ViewResult).ViewData.Model as ProductsListViewModel;
+				(controller.Index(null, 2) as ViewResult).ViewData.Model as ProductsListViewModel;
 
 			// Assert
 			Product[] prodArray = result.Products.ToArray();
@@ -75,12 +75,11 @@ namespace SportsStore.Tests
 				new Product { ProductId = 5, Name = "P5" }
 			}).AsQueryable);
 
-			// Arrange
 			HomeController controller = new HomeController(mock.Object) { PageSize = 3 };
 
 			// Act
 			ProductsListViewModel result =
-				(controller.Index(2) as ViewResult).ViewData.Model as ProductsListViewModel;
+				(controller.Index(null, 2) as ViewResult).ViewData.Model as ProductsListViewModel;
 
 			// Assert
 			PagingInfo pageInfo = result.PagingInfo;
@@ -88,6 +87,27 @@ namespace SportsStore.Tests
 			Assert.Equal(3, pageInfo.ItemsPerPage);
 			Assert.Equal(5, pageInfo.TotalItems);
 			Assert.Equal(2, pageInfo.TotalPages);
+		}
+
+		[Fact]
+		public void Generate_Category_Specific_Product_Count()
+		{
+			// Arrange
+			Mock<IStoreRepository> mock = new Mock<IStoreRepository>();
+			mock.Setup(m => m.Products).Returns((new Product[] {
+				new Product { ProductId = 1, Name = "P1", Category = "Cat1" },
+				new Product { ProductId = 2, Name = "P2", Category = "Cat2" },
+				new Product { ProductId = 3, Name = "P3", Category = "Cat1" },
+				new Product { ProductId = 4, Name = "P4", Category = "Cat2" },
+				new Product { ProductId = 5, Name = "P5", Category = "Cat3" }
+			}).AsQueryable);
+
+			HomeController controller = new HomeController(mock.Object) { PageSize = 3 };
+			Func<ViewResult, ProductsListViewModel> GetModel = result => result?.ViewData?.Model as ProductsListViewModel;
+
+			// Action
+			int? res1 = GetModel(controller.Index("Cat1") as ViewResult)?.PagingInfo.TotalItems;
+
 		}
 	}
 }
