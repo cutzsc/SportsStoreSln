@@ -2,8 +2,20 @@
 
 <div class="card m-1 p-1">
 	<div class="card-body p-2">
-		<h4 class="card-title">@Model.Name</h4>
-		<span class="badge badge-pill badge-primary float-right">@Model.Price.ToString("c")</span>
-		<p class="card-text">@Model.Description</p>
+		<h4 class="card-title">
+			@Model.Name
+			<span class="badge badge-pill badge-primary float-right"><small>@Model.Price.ToString("c")</small></span>
+		</h4>
 	</div>
+	<form id="@Model.ProductId" asp-page="/Cart" method="post">
+		<input type="hidden" asp-for="ProductId" />
+		<input type="hidden" name="returnUrl"
+			   value="@ViewContext.HttpContext.Request.PathAndQuery()" />
+		<p class="card-text p-2">
+			@Model.Description
+			<button type="submit" class="btn btn-success btn-sm float-right">
+				Add To Cart
+			</button>
+		</p>
+	</form>
 </div>
