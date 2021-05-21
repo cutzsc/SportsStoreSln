@@ -16,7 +16,7 @@ namespace SportsStore.Models
 	{
 		public List<CartLine> Lines { get; set; } = new List<CartLine>();
 
-		public void AddItem(Product product, int quantity)
+		public virtual void AddItem(Product product, int quantity)
 		{
 			CartLine line = Lines
 				.Where(p => p.Product.ProductId == product.ProductId)
@@ -36,7 +36,7 @@ namespace SportsStore.Models
 			}
 		}
 
-		public void RemoveLine(Product product)
+		public virtual void RemoveLine(Product product)
 		{
 			Lines.RemoveAll(l => l.Product.ProductId == product.ProductId);
 		}
@@ -46,6 +46,6 @@ namespace SportsStore.Models
 			return Lines.Sum(l => l.Product.Price * l.Quantity);
 		}
 
-		public void Clear() => Lines.Clear();
+		public virtual void Clear() => Lines.Clear();
 	}
 }

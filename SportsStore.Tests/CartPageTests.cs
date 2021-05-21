@@ -29,24 +29,8 @@ namespace SportsStore.Tests
 			cartModel.AddItem(p1, 2);
 			cartModel.AddItem(p2, 1);
 
-			// - create a mock page context and session
-			Mock<ISession> mockSession = new Mock<ISession>();
-			byte[] data =
-				Encoding.UTF8.GetBytes(JsonSerializer.Serialize(cartModel));
-			mockSession.Setup(c => c.TryGetValue(It.IsAny<string>(), out data));
-			Mock<HttpContext> mockContext = new Mock<HttpContext>();
-			mockContext.SetupGet(c => c.Session).Returns(mockSession.Object);
-
 			// Action
-			Cart cart = new Cart(mockRepo.Object)
-			{
-				PageContext = new PageContext(new ActionContext
-				{
-					HttpContext = mockContext.Object,
-					RouteData = new Microsoft.AspNetCore.Routing.RouteData(),
-					ActionDescriptor = new PageActionDescriptor()
-				})
-			};
+			Cart cart = new Cart(mockRepo.Object, cartModel);
 			cart.OnGet("myUrl");
 
 			//Assert
@@ -69,34 +53,15 @@ namespace SportsStore.Tests
 			cartModel.AddItem(p1, 2);
 			cartModel.AddItem(p2, 1);
 
-			// - create a mock page context and session
-			Mock<ISession> mockSession = new Mock<ISession>();
-			mockSession.Setup(s => s.Set(It.IsAny<string>(), It.IsAny<byte[]>()))
-				.Callback<string, byte[]>((key, val) =>
-				{
-					cartModel = JsonSerializer.Deserialize<CartModel>(Encoding.UTF8.GetString(val));
-				});
-
-			Mock<HttpContext> mockContext = new Mock<HttpContext>();
-			mockContext.SetupGet(c => c.Session).Returns(mockSession.Object);
-
 			// Action
-			Cart cart = new Cart(mockRepo.Object)
-			{
-				PageContext = new PageContext(new ActionContext
-				{
-					HttpContext = mockContext.Object,
-					RouteData = new Microsoft.AspNetCore.Routing.RouteData(),
-					ActionDescriptor = new PageActionDescriptor()
-				})
-			};
+			Cart cart = new Cart(mockRepo.Object, cartModel);
 			cart.OnPost(1, "myUrl");
 			cart.OnPost(2, "myUrl");
 
 			// Assert
-			Assert.Single(cartModel.Lines);
-			Assert.Equal("P2", cartModel.Lines.First().Product.Name);
-			Assert.Equal(1, cartModel.Lines.First().Quantity);
+			Assert.Equal(2, cartModel.Lines.Count());
+			Assert.Equal("P1", cartModel.Lines.First().Product.Name);
+			Assert.Equal(3, cartModel.Lines.First().Quantity);
 		}
 	}
 }

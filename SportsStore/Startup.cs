@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SportsStore.Models;
 using Microsoft.EntityFrameworkCore;
+using SportsStore.Pages;
 
 namespace SportsStore
 {
@@ -32,10 +33,13 @@ namespace SportsStore
 				options.UseSqlServer(
 					Configuration["ConnectionStrings:SportsStoreConnection"]);
 			});
-			services.AddScoped<IStoreRepository, EFStoryRepository>();
+			services.AddScoped<IStoreRepository, EFStoreRepository>();
+			services.AddScoped<IOrderRepository, EFOrderRepository>();
 			services.AddRazorPages();
 			services.AddDistributedMemoryCache();
 			services.AddSession();
+			services.AddScoped<CartModel>(sp => SessionCart.GetCart(sp));
+			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
