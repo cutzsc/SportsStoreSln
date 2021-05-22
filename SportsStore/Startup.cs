@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SportsStore.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using SportsStore.Pages;
 
 namespace SportsStore
@@ -33,6 +34,13 @@ namespace SportsStore
 				options.UseSqlServer(
 					Configuration["ConnectionStrings:SportsStoreConnection"]);
 			});
+			services.AddDbContext<AppIdentityDbContext>(options =>
+			{
+				options.UseSqlServer(
+					Configuration["ConnectionStrings:IdentityConnection"]);
+			});
+			services.AddIdentity<IdentityUser, IdentityRole>()
+					.AddEntityFrameworkStores<AppIdentityDbContext>();
 			services.AddScoped<IStoreRepository, EFStoreRepository>();
 			services.AddScoped<IOrderRepository, EFOrderRepository>();
 			services.AddRazorPages();
@@ -54,8 +62,9 @@ namespace SportsStore
 			app.UseStatusCodePages();
 			app.UseStaticFiles();
 			app.UseSession();
-
 			app.UseRouting();
+			app.UseAuthentication();
+			app.UseAuthorization();
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllerRoute("catpage",
@@ -81,6 +90,7 @@ namespace SportsStore
 			});
 
 			SeedData.EnsurePopulated(app);
+			IdentitySeedData.EnsurePopulated(app);
 		}
 	}
 }
