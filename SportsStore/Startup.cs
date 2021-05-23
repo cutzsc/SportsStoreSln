@@ -54,12 +54,17 @@ namespace SportsStore
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
+			if (env.IsProduction())
+			{
+				app.UseExceptionHandler("/error");
+			}
+
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
+				app.UseStatusCodePages();
 			}
 
-			app.UseStatusCodePages();
 			app.UseStaticFiles();
 			app.UseSession();
 			app.UseRouting();
